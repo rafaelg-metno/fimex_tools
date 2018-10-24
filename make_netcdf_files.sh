@@ -20,7 +20,7 @@ sfx=1
 atm=1
 debug=0
 
-set -- $(getopt I:i:c:p:s:o:d:l:e::E::m:v:w:h:f:a:D:: "$@")
+set -- $(getopt I:i:c:p:s:S:o:d:l:e:E:m:v:w:h:f:a:D: "$@")
 while [ $# -gt 0 ]; do
   case "$1" in
     (-I) fcint=$2; shift;;
@@ -31,15 +31,15 @@ while [ $# -gt 0 ]; do
     (-l) prog_length_in=$2; shift;;
     (-o) output=$2; shift;;
     (-d) output_dir=$2; shift;;
-    (-S) skip_first=1; shift;;
-    (-e) eps=1;;
-    (-E) merge_eps=1;;
+    (-S) skip_first=$2; shift;;
+    (-e) eps=$2;;
+    (-E) merge_eps=$2;;
     (-m) eps_members=$2; shift;;
     (-v) vrb="$2"; shift;;
     (-w) wdir=$2; shift;;
     (-f) sfx=$2; shift;;
     (-a) atm=$2; shift;;
-    (-D) debug=1;;  
+    (-D) debug=$2;;  
     (-h)
 	echo ""
 	echo "Usage: $0 DTG-START DTG-END ARCHIVE-PATTERN [-I FCINT] [-l FORECAST-LENGTH]";
