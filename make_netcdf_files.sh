@@ -19,7 +19,7 @@ prefix="fc"
 config="AromeGribReaderConfig.xml"
 template=""
 suffix="@"
-output=""
+output="${prefix}@YYYY@@MM@@DD@@HH@.nc"
 output_dir="./"
 prog_length_in=66
 skip_first=0
@@ -113,7 +113,7 @@ sfxtmp=`echo $suffix | sed -e "s#@#grib#g"`
 sfxtmp=`echo $sfxtmp | sed -e "s#,# #g"`
 eval "sfxtmp=($sfxtmp)"
 
-[ "$output" == "" ] && output="${prefix}@YYYY@@MM@@DD@@HH@"
+[ "$output" == "" ] && output="${prefix}@YYYY@@MM@@DD@@HH@.nc"
 
 echo ""
 echo $startDTG $endDTG $pattern
@@ -223,19 +223,19 @@ while [ "$dtg" -le "$endDTG" ]; do
   mbr=0
   
   # Loop over ensemlbe members for indexing. Only one loop in case of eps=0
-  while [ "$mbr" -lt "$eps_members" ]; do
+  while [ "$mbr" -le "$eps_members" ]; do
 
     mbrtmp=$(printf "%03d" "$mbr")
 
     if [ "$merge_eps" -eq 1 ]; then
       # Setting mbr to eps_members to terminate after one loop
       mbr=$eps_members
-      suboutput=`echo "$output.nc" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
+      suboutput=`echo "$output" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
       setup_file="$suboutput_dir/setup$dtg.cfg"
       glob_file="glob:$subw_dir/*.grb"
     else
-echo "OUTPUT: $output-mbr$mbrtmp.nc"
-      suboutput=`echo "$output-mbr$mbrtmp.nc" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
+echo "OUTPUT: $output-mbr$mbrtmp"
+      suboutput=`echo "$output-mbr$mbrtmp" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
       setup_file="$suboutput_dir/setup$dtg-mbr$mbrtmp.cfg"
       glob_file="glob:$subw_dir/*mbr$mbrtmp.grb"
     fi
@@ -252,7 +252,7 @@ echo "OUTPUT: $output-mbr$mbrtmp.nc"
 
     if [ "$merge_eps" -eq 1 ]; then
       setup_mbr=0
-      while [ "$setup_mbr" -le "$eps_members" ]; do
+      while [ "$setup_mbr" -lt "$eps_members" ]; do
         setup_mbrtmp=$(printf "%03d" "$setup_mbr") 				
         echo "optional=memberName:mbr$setup_mbrtmp" >> $setup_file	
         setup_mbr=$((setup_mbr+=1))							
