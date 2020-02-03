@@ -19,7 +19,7 @@ prefix="fc"
 config="AromeGribReaderConfig.xml"
 template=""
 suffix="@"
-output=""
+output="${prefix}@YYYY@@MM@@DD@@HH@.nc"
 output_dir="./"
 prog_length_in=66
 skip_first=0
@@ -96,10 +96,12 @@ else
   endDTG=$2
   pattern=$3
 fi
+# Create timestamp
+timestamp=$(date +%s)
 
 # Default output file and folder
 if [ $eps -ne 1 ]; then
-  $eps_members=0
+  eps_members=0
 fi
 
 if [ "$vrb" == "all" ]; then
@@ -112,8 +114,6 @@ fi
 sfxtmp=`echo $suffix | sed -e "s#@#grib#g"`
 sfxtmp=`echo $sfxtmp | sed -e "s#,# #g"`
 eval "sfxtmp=($sfxtmp)"
-
-[ "$output" == "" ] && output="${prefix}@YYYY@@MM@@DD@@HH@"
 
 echo ""
 echo $startDTG $endDTG $pattern
@@ -158,8 +158,7 @@ while [ "$dtg" -le "$endDTG" ]; do
   #Setting eps variables
   mbr=0
   # Loop over ensemlbe members for indexing. Only one loop in case of eps=0
-  while [ "$mbr" -lt "$eps_members" ]; do
-
+  while [ "$mbr" -le "$eps_members" ]; do
     mbrtmp=$(printf "%03d" "$mbr")
 	
     if [ $eps -eq 1 ]; then
@@ -223,20 +222,20 @@ while [ "$dtg" -le "$endDTG" ]; do
   mbr=0
   
   # Loop over ensemlbe members for indexing. Only one loop in case of eps=0
-  while [ "$mbr" -lt "$eps_members" ]; do
+  while [ "$mbr" -le "$eps_members" ]; do
 
     mbrtmp=$(printf "%03d" "$mbr")
 
     if [ "$merge_eps" -eq 1 ]; then
       # Setting mbr to eps_members to terminate after one loop
       mbr=$eps_members
-      suboutput=`echo "$output.nc" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
-      setup_file="$suboutput_dir/setup$dtg.cfg"
+      suboutput=`echo "$output" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
+      setup_file="$suboutput_dir/setup${dtg}_${timestamp}.cfg"
       glob_file="glob:$subw_dir/*.grb"
     else
-echo "OUTPUT: $output-mbr$mbrtmp.nc"
-      suboutput=`echo "$output-mbr$mbrtmp.nc" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
-      setup_file="$suboutput_dir/setup$dtg-mbr$mbrtmp.cfg"
+echo "OUTPUT: $output-mbr$mbrtmp"
+      suboutput=`echo "$output-mbr$mbrtmp" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
+      setup_file="$suboutput_dir/setup${dtg}-mbr${mbrtmp}_${timestamp}.cfg"
       glob_file="glob:$subw_dir/*mbr$mbrtmp.grb"
     fi
 
