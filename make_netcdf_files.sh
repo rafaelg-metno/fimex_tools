@@ -115,6 +115,11 @@ sfxtmp=`echo $suffix | sed -e "s#@#grib#g"`
 sfxtmp=`echo $sfxtmp | sed -e "s#,# #g"`
 eval "sfxtmp=($sfxtmp)"
 
+<<<<<<< HEAD
+=======
+[ "$output" == "" ] && output="${prefix}@YYYY@@MM@@DD@@HH@.nc"
+
+>>>>>>> 6251f343a23270b6186bdebb332a4ab95e18287a
 echo ""
 echo $startDTG $endDTG $pattern
 echo ""
@@ -230,12 +235,20 @@ while [ "$dtg" -le "$endDTG" ]; do
       # Setting mbr to eps_members to terminate after one loop
       mbr=$eps_members
       suboutput=`echo "$output" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
+<<<<<<< HEAD
       setup_file="$suboutput_dir/setup${dtg}_${timestamp}.cfg"
+=======
+      setup_file="$suboutput_dir/setup$dtg.cfg"
+>>>>>>> 6251f343a23270b6186bdebb332a4ab95e18287a
       glob_file="glob:$subw_dir/*.grb"
     else
 echo "OUTPUT: $output-mbr$mbrtmp"
       suboutput=`echo "$output-mbr$mbrtmp" | sed -e "s#@YYYY@#${yyyy}#g" -e "s#@YY@#${yy}#g" -e "s#@MM@#${mm}#g" -e "s#@DD@#${dd}#g" -e "s#@HH@#${hh}#g"`
+<<<<<<< HEAD
       setup_file="$suboutput_dir/setup${dtg}-mbr${mbrtmp}_${timestamp}.cfg"
+=======
+      setup_file="$suboutput_dir/setup$dtg-mbr$mbrtmp.cfg"
+>>>>>>> 6251f343a23270b6186bdebb332a4ab95e18287a
       glob_file="glob:$subw_dir/*mbr$mbrtmp.grb"
     fi
 
@@ -251,7 +264,7 @@ echo "OUTPUT: $output-mbr$mbrtmp"
 
     if [ "$merge_eps" -eq 1 ]; then
       setup_mbr=0
-      while [ "$setup_mbr" -le "$eps_members" ]; do
+      while [ "$setup_mbr" -lt "$eps_members" ]; do
         setup_mbrtmp=$(printf "%03d" "$setup_mbr") 				
         echo "optional=memberName:mbr$setup_mbrtmp" >> $setup_file	
         setup_mbr=$((setup_mbr+=1))							
